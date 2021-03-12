@@ -1,0 +1,784 @@
+<?xml version="1.0"?>
+
+<doc>
+  <assembly>
+    <name>TheGameApp</name>
+  </assembly>
+  <members>
+    <member name="T:TheGameApp.App">
+      <summary>
+        The app.
+      </summary>
+    </member>
+    <member name="M:TheGameApp.App.Main(System.String[])">
+      <summary>
+        Run the application.
+      </summary>
+      <param name="args">Arguments to be used for the configuration of the simulation.</param>
+    </member>
+    <member name="M:TheGameApp.App.RunSimulation(TheGameApp.Configuration)">
+      <summary>
+        Runs the simulation with the given configuration.
+      </summary>
+      <param name="configuration">The configuration.</param>
+      <exception cref="T:System.AggregateException">One or more exceptions occurred during the running of the simulation.</exception>
+    </member>
+    <member name="T:TheGameApp.ApplicationArgumentReader">
+      <summary>
+        Reads application arguments.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.ApplicationArgumentReader.valueSettings">
+      <summary>
+        All available settings for the configuration. Initially, the current value is set to the default value.
+      </summary>
+    </member>
+    <member name="M:TheGameApp.ApplicationArgumentReader.DisplayAvailableArguments">
+      <summary>
+        Display the available arguments in the console.
+      </summary>
+    </member>
+    <member
+      name="M:TheGameApp.ApplicationArgumentReader.GetConfigurationFromArguments(System.Collections.Generic.IEnumerable{System.String})">
+      <summary>
+        Get the configuration from the given application arguments.
+      </summary>
+      <param name="arguments">The application arguments.</param>
+      <returns>If a valid configuration is found, returns true and the configuration; otherwise false.</returns>
+    </member>
+    <member name="T:TheGameApp.AvailablePlayer">
+      <summary>
+        The available player types.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.AvailablePlayer.PlaysBackwardsAndSmallestDistance">
+      <summary>
+        <para><see cref="T:TheGameApp.Player" /> implementation with three rules:</para>
+        <list type="number">
+          <item>
+            <description>Play every possible backwards trick.</description>
+          </item>
+          <item>
+            <description>Play every card with a distance up to 3.</description>
+          </item>
+          <item>
+            <description>
+              If more cards need to be played, play them in descending order of distance
+              until the minimum number of cards to play is reached.
+            </description>
+          </item>
+        </list>
+      </summary>
+    </member>
+    <member name="F:TheGameApp.AvailablePlayer.PlaysBackwardsAndSmallestDistanceWithCommunication">
+      <summary>
+        <para><see cref="T:TheGameApp.Player" /> implementation that communicates possible backward tricks, with three rules:</para>
+        <list type="number">
+          <item>
+            <description>Play every possible backwards trick.</description>
+          </item>
+          <item>
+            <description>Play every card with a distance up to 5 unless blocked by DoNotPlayHere.</description>
+          </item>
+          <item>
+            <description>
+              If more cards need to be played, play them in descending order of distance
+              until the minimum number of cards to play is reached.
+            </description>
+          </item>
+        </list>
+      </summary>
+    </member>
+    <member name="F:TheGameApp.AvailablePlayer.PlaysBestScoredPlaysWithCommunication">
+      <summary>
+        Player with extended communication.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.AvailablePlayer.PlaysBestScoredPlaysWithSimpleCommunication">
+      <summary>
+        <para><see cref="T:TheGameApp.Player" /> implementation that communicates, with two rules:</para>
+        <list type="number">
+          <item>
+            <description>
+              Play every play with a score change up to 5 if two cards have to be played, otherwise up to 8.
+              A row with DoNotPlayHere has a score penalty of 21.
+            </description>
+          </item>
+          <item>
+            <description>
+              If more cards need to be played, play them by lowest score
+              until the minimum number of cards to play is reached.
+              A row with DoNotPlayHere has a score penalty of 21.
+            </description>
+          </item>
+        </list>
+      </summary>
+    </member>
+    <member name="F:TheGameApp.AvailablePlayer.PlaysBestScoredPlays">
+      <summary>
+        <para><see cref="T:TheGameApp.Player" /> implementation with two rules:</para>
+        <list type="number">
+          <item>
+            <description>
+              Play every play with a score change up to 4.
+              (This includes all backwards tricks.)
+            </description>
+          </item>
+          <item>
+            <description>
+              If more cards need to be played, play them by lowest score
+              until the minimum number of cards to play is reached.
+            </description>
+          </item>
+        </list>
+      </summary>
+    </member>
+    <member name="T:TheGameApp.CardDeck">
+      <summary>
+        The card deck for "The Game".
+      </summary>
+    </member>
+    <member name="M:TheGameApp.CardDeck.#ctor(System.Random)">
+      <summary>
+        Initializes a new instance of the <see cref="T:TheGameApp.CardDeck" /> class.
+      </summary>
+      <param name="random">The random generator.</param>
+      <remarks>
+        <para>The cards are automatically shuffled on initialization.</para>
+      </remarks>
+      <exception cref="T:System.ArgumentNullException"><paramref name="random" /> is null</exception>
+    </member>
+    <member name="P:TheGameApp.CardDeck.IsEmpty">
+      <summary>
+        Returns whether the deck is empty.
+      </summary>
+      <value>
+        True if the deck is empty; otherwise false.
+      </value>
+    </member>
+    <member name="M:TheGameApp.CardDeck.DrawCard">
+      <summary>
+        Draws the next card.
+      </summary>
+      <returns>The next card.</returns>
+      <exception cref="T:System.InvalidOperationException">The deck is empty.</exception>
+    </member>
+    <member name="T:TheGameApp.CardPlacement">
+      <summary>
+        The placement of a card onto a <see cref="T:TheGameApp.RowOfCards" />.
+      </summary>
+    </member>
+    <member name="M:TheGameApp.CardPlacement.#ctor(TheGameApp.RowOfCardsIdentifier,System.Int32)">
+      <summary>
+        The placement of a card onto a <see cref="T:TheGameApp.RowOfCards" />.
+      </summary>
+    </member>
+    <member name="T:TheGameApp.Configuration">
+      <summary>
+        Configuration for the application.
+      </summary>
+      <remarks>No validation of the arguments.</remarks>
+    </member>
+    <member
+      name="M:TheGameApp.Configuration.#ctor(System.Int32,System.Int32,System.Collections.Generic.IList{TheGameApp.AvailablePlayer})">
+      <summary>
+        Configuration for the application.
+      </summary>
+      <remarks>No validation of the arguments.</remarks>
+    </member>
+    <member name="M:TheGameApp.Configuration.ToString">
+      <inheritdoc />
+    </member>
+    <member name="T:TheGameApp.ConsoleOutput">
+      <summary>
+        Handles the output to the console.
+      </summary>
+    </member>
+    <member name="M:TheGameApp.ConsoleOutput.#ctor(System.Boolean)">
+      <summary>
+        Initializes a new instance of the <see cref="T:TheGameApp.ConsoleOutput" /> class.
+      </summary>
+      <param name="outputIsEnabled">If set to true, then output is enabled.</param>
+    </member>
+    <member name="T:TheGameApp.Game">
+      <summary>
+        The actual game.
+      </summary>
+    </member>
+    <member
+      name="M:TheGameApp.Game.#ctor(System.Collections.Generic.IReadOnlyList{TheGameApp.Player},System.Random,System.Boolean)">
+      <summary>
+        Initializes a new instance of the <see cref="T:TheGameApp.Game" /> class.
+      </summary>
+      <param name="players">The players for this game.</param>
+      <param name="random">The random generator.</param>
+      <param name="withOutput">Set to true, if the game should show its output.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        The number of <paramref name="players" /> is not within the range from 1
+        to 5.
+      </exception>
+      <exception cref="T:System.ArgumentNullException"><paramref name="players" /> is null</exception>
+    </member>
+    <member name="M:TheGameApp.Game.Run">
+      <summary>
+        Runs the game until it ends.
+      </summary>
+      <returns>The number of cards left at the end of the game.</returns>
+    </member>
+    <member name="M:TheGameApp.Game.IsDecisionThatCardWillBePlayed(TheGameApp.PlayerMoveDecision)">
+      <summary>
+        Evaluates the player decision to see if a card will be played.
+      </summary>
+      <param name="decision">The decision of the player.</param>
+      <returns>True, if a card will be played; otherwise false.</returns>
+      <exception cref="T:System.ArgumentOutOfRangeException">The decision is not implemented.</exception>
+    </member>
+    <member name="M:TheGameApp.Game.PerformPlayerMove(TheGameApp.Player,TheGameApp.CardPlacement)">
+      <summary>
+        Performs the player move if allowed; otherwise does nothing.
+      </summary>
+      <param name="player">The player that does the move.</param>
+      <param name="placement">The chosen placement for this move.</param>
+      <returns>True, if the move is allowed, otherwise false.</returns>
+    </member>
+    <member name="T:TheGameApp.GameRules">
+      <summary>
+        Game rules/settings for "The Game".
+      </summary>
+    </member>
+    <member name="F:TheGameApp.GameRules.LowestNumberInGame">
+      <summary>
+        The <b>lowest</b> number in the game and also the start card for the rows that go <b>up</b>.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.GameRules.HighestNumberInGame">
+      <summary>
+        The <b>highest</b> number in the game and also the start card for the rows that go <b>down</b>.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.GameRules.AllowedBackwardsTrick">
+      <summary>
+        The difference allowed by the backwards trick.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.GameRules.MinNumberOfPlayersAllowed">
+      <summary>
+        The <b>minimum</b> number of players allowed.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.GameRules.MaxNumberOfPlayersAllowed">
+      <summary>
+        The <b>maximum</b> number of players allowed.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.GameRules.NumberOfCardsToPlayBeforeDeckIsEmpty">
+      <summary>
+        The number of cards that have to be played in each players turn <b>before</b> the card deck is empty.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.GameRules.NumberOfCardsToPlayAfterDeckIsEmpty">
+      <summary>
+        The number of cards that have to be played in each players turn <b>after</b> the card deck is empty.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.GameRules.NumberOfCardsInDeck">
+      <summary>
+        The number of cards in the card deck.
+      </summary>
+    </member>
+    <member name="M:TheGameApp.GameRules.GetNumberOfCardsToDraw(System.Int32)">
+      <summary>
+        Gets the number of cards to be drawn by each player at the start of the game.
+      </summary>
+      <param name="numberOfPlayers">The number of players.</param>
+      <exception cref="T:System.NotSupportedException">Thrown, if the number of players is not supported.</exception>
+      <returns>The number of cards to be drawn by each player</returns>
+    </member>
+    <member name="T:TheGameApp.Player">
+      <summary>
+        A player for "The Game".
+      </summary>
+    </member>
+    <member name="M:TheGameApp.Player.ToString">
+      <inheritdoc />
+    </member>
+    <member name="M:TheGameApp.Player.NewPlayer(System.String)">
+      <summary>
+        Initializes and returns a new instance of the <see cref="T:TheGameApp.Player" /> class.
+      </summary>
+      <param name="name">The name of the player.</param>
+      <returns>The new player.</returns>
+      <remarks>
+        <para>A new player has a standard start rule and communication rule set, but not move rules.</para>
+      </remarks>
+    </member>
+    <member
+      name="M:TheGameApp.Player.AddMoveRule(System.Func{System.Collections.Generic.IReadOnlyCollection{System.Int32},TheGameApp.PlayerInformation,TheGameApp.PlayerMove})">
+      <summary>
+        Adds an additional move rule at the end of the rules chain.
+      </summary>
+      <param name="additionalMoveRule">The additional move rule.</param>
+      <returns>The player.</returns>
+      <remarks>
+        <para>Move rules are processed in order until a decision is reached.</para>
+      </remarks>
+    </member>
+    <member
+      name="M:TheGameApp.Player.AddCommunicationRule(System.Func{System.Collections.Generic.IReadOnlyCollection{System.Int32},TheGameApp.PlayerInformation,System.Collections.Generic.List{TheGameApp.PlayerCommunication}})">
+      <summary>
+        Adds an additional communication rule.
+      </summary>
+      <param name="additionalCommunicationRule">The communication rule.</param>
+      <returns>The player.</returns>
+    </member>
+    <member
+      name="M:TheGameApp.Player.SetStartRule(System.Func{System.Collections.Generic.IReadOnlyCollection{System.Int32},System.Int32,TheGameApp.PlayerStartDecision})">
+      <summary>
+        Sets the new start rule. The old rule is overwritten.
+      </summary>
+      <param name="newStartRule">The start rule.</param>
+      <returns>The player.</returns>
+    </member>
+    <member name="M:TheGameApp.Player.ToString(System.Boolean)">
+      <summary>
+        Converts the player to a string representation.
+      </summary>
+      <param name="outputWithCards">If set to true, add the cards in hand to the string representation.</param>
+      <returns>Player representation as string.</returns>
+    </member>
+    <member name="M:TheGameApp.Player.ReceiveCard(System.Int32)">
+      <summary>
+        Receive the card and add it to the cards in hand.
+      </summary>
+      <param name="card">The card to receive.</param>
+    </member>
+    <member name="M:TheGameApp.Player.HandOverCard(System.Int32)">
+      <summary>
+        Hand over the card.
+      </summary>
+      <param name="card">The card to hand over.</param>
+      <exception cref="T:System.ArgumentException">The card was not in the hand.</exception>
+    </member>
+    <member name="M:TheGameApp.Player.GetNextMove(TheGameApp.PlayerInformation)">
+      <summary>
+        Get the player's next move.
+      </summary>
+      <param name="info">The available information for the player.</param>
+      <returns>The next move of the player.</returns>
+    </member>
+    <member name="M:TheGameApp.Player.GetCommunication(TheGameApp.PlayerInformation)">
+      <summary>
+        Get the player's communication.
+      </summary>
+      <param name="info">The available information for the player.</param>
+      <returns>The communication from the player.</returns>
+    </member>
+    <member name="M:TheGameApp.Player.GetStartDecision(System.Int32)">
+      <summary>
+        Gets the player's start decision.
+      </summary>
+      <param name="round">The round.</param>
+      <returns>The start decision from the player.</returns>
+    </member>
+    <member
+      name="M:TheGameApp.Player.AlwaysWantsToStart(System.Collections.Generic.IReadOnlyCollection{System.Int32},System.Int32)">
+      <summary>
+        Standard implementation for the decision of the player to start the game; the player always wants to play.
+      </summary>
+      <param name="cards">Not used.</param>
+      <param name="startingRound">Not used.</param>
+      <returns>Player wants to start.</returns>
+    </member>
+    <member name="T:TheGameApp.PlayerCommunication">
+      <summary>
+        The communication between <see cref="T:TheGameApp.Player" />s.
+      </summary>
+    </member>
+    <member
+      name="M:TheGameApp.PlayerCommunication.#ctor(TheGameApp.RowOfCardsIdentifier,TheGameApp.PlayerCommunicationType)">
+      <summary>
+        The communication between <see cref="T:TheGameApp.Player" />s.
+      </summary>
+    </member>
+    <member name="T:TheGameApp.PlayerCommunicationRules">
+      <summary>
+        Collection of <see cref="T:TheGameApp.Player" /> rules to get <see cref="T:TheGameApp.PlayerCommunication" />.
+      </summary>
+    </member>
+    <member name="T:TheGameApp.PlayerCommunicationType">
+      <summary>
+        The possible types of allowed <see cref="T:TheGameApp.PlayerCommunication" />.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.PlayerCommunicationType.DoNotPlayHere">
+      <summary>
+        No one should play here.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.PlayerCommunicationType.TryNotToPlayHere">
+      <summary>
+        One should try not to play here.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.PlayerCommunicationType.OnlyBadMoveHere">
+      <summary>
+        The player can only play a bad move here.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.PlayerCommunicationType.CanNotPlay">
+      <summary>
+        The player can not play at all with the current rows.
+      </summary>
+    </member>
+    <member name="T:TheGameApp.PlayerFactory">
+      <summary>
+        Provides preset <see cref="T:TheGameApp.Player" />s.
+      </summary>
+    </member>
+    <member name="M:TheGameApp.PlayerFactory.PlaysBackwardsAndSmallestDistance(System.String)">
+      <summary>
+        <para><see cref="T:TheGameApp.Player" /> implementation with three rules:</para>
+        <list type="number">
+          <item>
+            <description>Play every possible backwards trick.</description>
+          </item>
+          <item>
+            <description>Play every card with a distance up to 3.</description>
+          </item>
+          <item>
+            <description>
+              If more cards need to be played, play them in descending order of distance
+              until the minimum number of cards to play is reached.
+            </description>
+          </item>
+        </list>
+      </summary>
+      <param name="name">Name of the player.</param>
+    </member>
+    <member name="M:TheGameApp.PlayerFactory.PlaysBackwardsAndSmallestDistanceWithCommunication(System.String)">
+      <summary>
+        <para><see cref="T:TheGameApp.Player" /> implementation that communicates possible backward tricks, with three rules:</para>
+        <list type="number">
+          <item>
+            <description>Play every possible backwards trick.</description>
+          </item>
+          <item>
+            <description>Play every card with a distance up to 5 unless blocked by DoNotPlayHere.</description>
+          </item>
+          <item>
+            <description>
+              If more cards need to be played, play them in descending order of distance
+              until the minimum number of cards to play is reached.
+            </description>
+          </item>
+        </list>
+      </summary>
+      <param name="name">Name of the player.</param>
+    </member>
+    <member
+      name="M:TheGameApp.PlayerFactory.GetPlayers(System.Collections.Generic.IReadOnlyList{TheGameApp.AvailablePlayer})">
+      <summary>
+        Gets the actual players from the available players.
+      </summary>
+      <param name="availablePlayers">The available players.</param>
+      <returns>The actual players.</returns>
+      <exception cref="T:System.ArgumentNullException"><paramref name="availablePlayers" /> is null</exception>
+      <exception cref="T:System.NotSupportedException"></exception>
+    </member>
+    <member name="M:TheGameApp.PlayerFactory.PlaysBestScoredPlaysWithCommunication(System.String)">
+      <summary>
+        Player with extended communication.
+      </summary>
+      <param name="name">Name of the player.</param>
+    </member>
+    <member name="M:TheGameApp.PlayerFactory.PlaysBestScoredPlaysWithSimpleCommunication(System.String)">
+      <summary>
+        <para><see cref="T:TheGameApp.Player" /> implementation that communicates, with two rules:</para>
+        <list type="number">
+          <item>
+            <description>
+              Play every play with a score change up to 5 if two cards have to be played, otherwise up to 8.
+              A row with DoNotPlayHere has a score penalty of 21.
+            </description>
+          </item>
+          <item>
+            <description>
+              If more cards need to be played, play them by lowest score
+              until the minimum number of cards to play is reached.
+              A row with DoNotPlayHere has a score penalty of 21.
+            </description>
+          </item>
+        </list>
+      </summary>
+      <param name="name">Name of the player.</param>
+    </member>
+    <member name="M:TheGameApp.PlayerFactory.PlaysBestScoredPlays(System.String)">
+      <summary>
+        <para><see cref="T:TheGameApp.Player" /> implementation with two rules:</para>
+        <list type="number">
+          <item>
+            <description>
+              Play every play with a score change up to 4.
+              (This includes all backwards tricks.)
+            </description>
+          </item>
+          <item>
+            <description>
+              If more cards need to be played, play them by lowest score
+              until the minimum number of cards to play is reached.
+            </description>
+          </item>
+        </list>
+      </summary>
+      <param name="name">name of the player.</param>
+    </member>
+    <member name="T:TheGameApp.PlayerInformation">
+      <summary>
+        The information that is handed to a <see cref="T:TheGameApp.Player" /> to make his
+        <see cref="T:TheGameApp.PlayerMoveDecision" /> or
+        <see cref="T:TheGameApp.PlayerCommunication" />.
+      </summary>
+    </member>
+    <member
+      name="M:TheGameApp.PlayerInformation.#ctor(System.Int32,System.Int32,System.Collections.ObjectModel.ReadOnlyDictionary{TheGameApp.RowOfCardsIdentifier,TheGameApp.RowOfCards}@,System.Collections.Generic.List{System.ValueTuple{System.Int32,TheGameApp.PlayerCommunication}})">
+      <summary>
+        The information that is handed to a <see cref="T:TheGameApp.Player" /> to make his
+        <see cref="T:TheGameApp.PlayerMoveDecision" /> or
+        <see cref="T:TheGameApp.PlayerCommunication" />.
+      </summary>
+    </member>
+    <member name="T:TheGameApp.PlayerMove">
+      <summary>
+        A move a <see cref="T:TheGameApp.Player" /> wants to do.
+      </summary>
+    </member>
+    <member name="M:TheGameApp.PlayerMove.#ctor(TheGameApp.PlayerMoveDecision,TheGameApp.CardPlacement)">
+      <summary>
+        A move a <see cref="T:TheGameApp.Player" /> wants to do.
+      </summary>
+    </member>
+    <member name="T:TheGameApp.PlayerMoveDecision">
+      <summary>
+        The decisions the <see cref="T:TheGameApp.Player" /> can make for a <see cref="T:TheGameApp.PlayerMove" />.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.PlayerMoveDecision.Undecided">
+      <summary>
+        The <see cref="T:TheGameApp.Player" /> has not decided yet.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.PlayerMoveDecision.HaveNoCards">
+      <summary>
+        The <see cref="T:TheGameApp.Player" /> has no more cards to play.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.PlayerMoveDecision.WantToPlay">
+      <summary>
+        The <see cref="T:TheGameApp.Player" /> wants to play a card.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.PlayerMoveDecision.DoNotWantToPlay">
+      <summary>
+        The <see cref="T:TheGameApp.Player" /> does not want to play a card.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.PlayerMoveDecision.CannotPlay">
+      <summary>
+        The <see cref="T:TheGameApp.Player" /> cannot play a card.
+      </summary>
+    </member>
+    <member name="T:TheGameApp.PlayerMoveRules">
+      <summary>
+        Collection of <see cref="T:TheGameApp.Player" /> rules that can be added to a player.
+      </summary>
+    </member>
+    <member name="T:TheGameApp.PlayerRulesUtils">
+      <summary>
+        Collection of <see cref="T:TheGameApp.Player" /> rules that can be added to a player.
+      </summary>
+    </member>
+    <member name="T:TheGameApp.PlayerStartDecision">
+      <summary>
+        The decisions a <see cref="T:TheGameApp.Player" /> can make at the start of the
+        <see cref="T:TheGameApp.Game" />.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.PlayerStartDecision.WantToStart">
+      <summary>
+        The <see cref="T:TheGameApp.Player" /> wants to start.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.PlayerStartDecision.CouldStart">
+      <summary>
+        The <see cref="T:TheGameApp.Player" /> could start, if necessary.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.PlayerStartDecision.DoNotWantToStart">
+      <summary>
+        The <see cref="T:TheGameApp.Player" /> does not want to start, if possible.
+      </summary>
+    </member>
+    <member name="T:TheGameApp.PlayerStartDecisionRules">
+      <summary>
+        Collection of <see cref="T:TheGameApp.Player" /> rules to get a <see cref="T:TheGameApp.PlayerStartDecision" />
+        .
+      </summary>
+    </member>
+    <member name="T:TheGameApp.RowOfCards">
+      <summary>
+        A row of cards for "The Game".
+      </summary>
+    </member>
+    <member name="M:TheGameApp.RowOfCards.#ctor(TheGameApp.RowOfCardsType)">
+      <summary>
+        Initializes a new instance of the <see cref="T:TheGameApp.RowOfCards" /> class.
+      </summary>
+      <param name="type">The type of the row.</param>
+    </member>
+    <member name="P:TheGameApp.RowOfCards.Type">
+      <summary>
+        The type of the row.
+      </summary>
+    </member>
+    <member name="P:TheGameApp.RowOfCards.NumberOfPlayedCards">
+      <summary>
+        Gets the number of cards played on this row.
+      </summary>
+      <value>
+        The number of cards.
+      </value>
+    </member>
+    <member name="P:TheGameApp.RowOfCards.CardOnTop">
+      <summary>
+        Gets the card on top of the row.
+      </summary>
+      <value>
+        The card on top of the row.
+      </value>
+    </member>
+    <member name="M:TheGameApp.RowOfCards.ToString">
+      <inheritdoc />
+    </member>
+    <member name="M:TheGameApp.RowOfCards.TryAddCard(System.Int32)">
+      <summary>
+        Tries to add the card if allowed.
+      </summary>
+      <param name="card">The card.</param>
+      <returns>True if the card can be added; otherwise false.</returns>
+    </member>
+    <member name="T:TheGameApp.RowOfCardsIdentifier">
+      <summary>
+        Identifier for the four <see cref="T:TheGameApp.RowOfCards" />.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.RowOfCardsIdentifier.FirstRowUp">
+      <summary>
+        The first row that goes up.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.RowOfCardsIdentifier.SecondRowUp">
+      <summary>
+        The second row that goes up.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.RowOfCardsIdentifier.FirstRowDown">
+      <summary>
+        The first row that goes down.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.RowOfCardsIdentifier.SecondRowDown">
+      <summary>
+        The second row that goes down.
+      </summary>
+    </member>
+    <member name="T:TheGameApp.RowOfCardsType">
+      <summary>
+        The two possible types of the <see cref="T:TheGameApp.RowOfCards" />.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.RowOfCardsType.Up">
+      <summary>
+        The <see cref="T:TheGameApp.RowOfCards" /> goes up.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.RowOfCardsType.Down">
+      <summary>
+        The <see cref="T:TheGameApp.RowOfCards" /> goes down.
+      </summary>
+    </member>
+    <member name="T:TheGameApp.ScorePlayerPlays">
+      <summary>
+        Score all possible plays the player could do.
+      </summary>
+    </member>
+    <member name="F:TheGameApp.ScorePlayerPlays.ScoreCutOff">
+      <summary>
+        Limits the processing of useless plays for performance reasons.
+      </summary>
+    </member>
+    <member
+      name="M:TheGameApp.ScorePlayerPlays.GetScoredPlays(System.Collections.Generic.IReadOnlyCollection{System.Int32},System.Collections.Generic.IReadOnlyDictionary{TheGameApp.RowOfCardsIdentifier,TheGameApp.RowOfCards})">
+      <summary>
+        Get possible plays and their scores.
+      </summary>
+      <param name="cardsInHand">The cards in hand.</param>
+      <param name="rows">The rows.</param>
+      <returns>
+        Possible plays and their scores.
+      </returns>
+      <remarks>
+        <para>For performance reasons, not all possible plays are scored and returned, only promising ones.</para>
+      </remarks>
+    </member>
+    <member name="T:TheGameApp.SearchForOptimisedParameters">
+      <summary>
+        The search for optimised parameters.
+      </summary>
+    </member>
+    <member name="M:TheGameApp.SearchForOptimisedParameters.Main">
+      <summary>
+        Search for optimised parameters.
+      </summary>
+    </member>
+    <member name="M:TheGameApp.SearchForOptimisedParameters.RunSimulation(TheGameApp.Configuration)">
+      <summary>
+        Runs the simulation with the given configuration.
+      </summary>
+      <param name="configuration">The configuration.</param>
+      <exception cref="T:System.AggregateException">One or more exceptions occurred during the running of the simulation.</exception>
+    </member>
+    <member name="T:TheGameApp.SimulationResult">
+      <summary>
+        The result from the <see cref="T:TheGameApp.SimulationRunner" />.
+      </summary>
+    </member>
+    <member
+      name="M:TheGameApp.SimulationResult.#ctor(System.Int32,System.Int32,System.Double,System.Double,System.Double)">
+      <summary>
+        The result from the <see cref="T:TheGameApp.SimulationRunner" />.
+      </summary>
+    </member>
+    <member name="T:TheGameApp.SimulationRunner">
+      <summary>
+        Runs the simulation of the "The Game".
+      </summary>
+    </member>
+    <member name="M:TheGameApp.SimulationRunner.#ctor(System.Int32)">
+      <summary>
+        Initializes a new instance of the <see cref="T:TheGameApp.SimulationRunner" /> class.
+      </summary>
+      <param name="degreeOfParallelism">Degree of parallelism.</param>
+    </member>
+    <member
+      name="M:TheGameApp.SimulationRunner.Run(System.Collections.Generic.IReadOnlyList{TheGameApp.AvailablePlayer},System.Int32)">
+      <summary>
+        Runs the simulation.
+      </summary>
+      <param name="availablePlayers">The available players.</param>
+      <param name="numberOfRuns">The number of runs.</param>
+      <returns>The result of the simulation.</returns>
+      <exception cref="T:System.AggregateException">One or more exceptions occurred during the running of the simulation.</exception>
+      <exception cref="T:System.OperationCanceledException">The simulation query was canceled.</exception>
+    </member>
+  </members>
+</doc>

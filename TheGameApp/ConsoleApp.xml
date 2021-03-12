@@ -1,0 +1,683 @@
+<?xml version="1.0"?>
+
+<doc>
+  <assembly>
+    <name>TheGameApp</name>
+  </assembly>
+  <members>
+    <member name="T:ConsoleApp.App">
+      <summary>
+        The app.
+      </summary>
+    </member>
+    <member name="T:ConsoleApp.AvailablePlayer">
+      <summary>
+        The available player types.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.AvailablePlayer.PlaysCardWithSmallestDistance">
+      <summary>
+        <para><see cref="T:ConsoleApp.Player" /> implementation with two rules:</para>
+        <list type="number">
+          <item>
+            <description>Play every card with a distance of less than 5.</description>
+          </item>
+          <item>
+            <description>
+              If more cards need to be played, play them in descending order of distance
+              until the minimum number of cards to play is reached.
+            </description>
+          </item>
+        </list>
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.AvailablePlayer.PlaysBackwardsAndSmallestDistance">
+      <summary>
+        <para><see cref="T:ConsoleApp.Player" /> implementation with three rules:</para>
+        <list type="number">
+          <item>
+            <description>Play every possible backwards trick.</description>
+          </item>
+          <item>
+            <description>Play every card with a distance of less than 5.</description>
+          </item>
+          <item>
+            <description>
+              If more cards need to be played, play them in descending order of distance
+              until the minimum number of cards to play is reached.
+            </description>
+          </item>
+        </list>
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.AvailablePlayer.PlaysBackwardsAndSmallestDistanceWithCommunication">
+      <summary>
+        <para><see cref="T:ConsoleApp.Player" /> implementation that communicates, with four rules:</para>
+        <list type="number">
+          <item>
+            <description>Play every possible backwards trick.</description>
+          </item>
+          <item>
+            <description>Play every card with a distance of less than 5 unless blocked by DoNotPlayHere.</description>
+          </item>
+          <item>
+            <description>
+              If more cards need to be played, play them in descending order of distance unless blocked by
+              TryNotToPlayHere.
+            </description>
+          </item>
+          <item>
+            <description>
+              If more cards need to be played, play them in descending order of distance.
+            </description>
+          </item>
+        </list>
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.AvailablePlayer.PlaysBestScoredPlays">
+      <summary>
+        <para><see cref="T:ConsoleApp.Player" /> implementation that plays the best scored play from all possible plays.</para>
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.AvailablePlayer.BackwardsTrickWithOptionalBestScoredMove">
+      <summary>
+        <para><see cref="T:ConsoleApp.Player" /> implementation that communicates, with two rules:</para>
+        <list type="number">
+          <item>
+            <description>Play every possible backwards trick.</description>
+          </item>
+          <item>
+            <description>
+              If more cards need to be played, play the best scored move.
+            </description>
+          </item>
+        </list>
+      </summary>
+    </member>
+    <member name="T:ConsoleApp.CardDeck">
+      <summary>
+        The card deck for "The Game".
+      </summary>
+    </member>
+    <member name="M:ConsoleApp.CardDeck.#ctor(System.Random)">
+      <summary>
+        Initializes a new instance of the <see cref="T:ConsoleApp.CardDeck" /> class.
+      </summary>
+      <param name="random">The random generator.</param>
+      <remarks>
+        <para>The cards are automatically shuffled on initialization.</para>
+      </remarks>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="random" /> is <see langword="null" />
+      </exception>
+    </member>
+    <member name="P:ConsoleApp.CardDeck.IsEmpty">
+      <summary>
+        Returns whether the deck is empty.
+      </summary>
+      <value>
+        <see langword="true" /> if the deck is empty; otherwise, <see langword="false" />.
+      </value>
+    </member>
+    <member name="M:ConsoleApp.CardDeck.DrawCard">
+      <summary>
+        Draws the next card.
+      </summary>
+      <returns>The next card.</returns>
+      <exception cref="T:System.InvalidOperationException">The deck is empty.</exception>
+    </member>
+    <member name="T:ConsoleApp.CardPlacement">
+      <summary>
+        The placement of a card onto a <see cref="T:ConsoleApp.RowOfCards" />.
+      </summary>
+    </member>
+    <member name="M:ConsoleApp.CardPlacement.#ctor(ConsoleApp.RowOfCardsIdentifier,System.Int32)">
+      <summary>
+        The placement of a card onto a <see cref="T:ConsoleApp.RowOfCards" />.
+      </summary>
+    </member>
+    <member name="T:ConsoleApp.ConsoleOutput">
+      <summary>
+        Handles the output to the console.
+      </summary>
+    </member>
+    <member name="M:ConsoleApp.ConsoleOutput.#ctor(System.Boolean)">
+      <summary>
+        Initializes a new instance of the <see cref="T:ConsoleApp.ConsoleOutput" /> class.
+      </summary>
+      <param name="outputIsEnabled">If set to <see langword="true" />, then output is enabled.</param>
+    </member>
+    <member name="T:ConsoleApp.Game">
+      <summary>
+        The actual game.
+      </summary>
+    </member>
+    <member
+      name="M:ConsoleApp.Game.#ctor(System.Collections.Generic.IReadOnlyList{ConsoleApp.Player},System.Random,System.Boolean)">
+      <summary>
+        Initializes a new instance of the <see cref="T:ConsoleApp.Game" /> class.
+      </summary>
+      <param name="players">The players for this game.</param>
+      <param name="random">The random generator.</param>
+      <param name="withOutput">Set to true, if the game should show its output.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        The number of <paramref name="players" /> is not within the range from 1
+        to 5.
+      </exception>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="players" /> is <see langword="null" />
+      </exception>
+    </member>
+    <member name="M:ConsoleApp.Game.Run">
+      <summary>
+        Runs the game until it ends.
+      </summary>
+      <returns>The number of cards left at the end of the game.</returns>
+    </member>
+    <member name="M:ConsoleApp.Game.IsDecisionThatCardWillBePlayed(ConsoleApp.PlayerMoveDecision)">
+      <summary>
+        Evaluates the player decision to see if a card will be played.
+      </summary>
+      <param name="decision">The decision of the player.</param>
+      <returns>True, if a card will be played; otherwise false.</returns>
+      <exception cref="T:System.ArgumentOutOfRangeException">The decision is not implemented.</exception>
+    </member>
+    <member name="M:ConsoleApp.Game.PerformPlayerMove(ConsoleApp.Player,ConsoleApp.CardPlacement)">
+      <summary>
+        Performs the player move if allowed; otherwise does nothing.
+      </summary>
+      <param name="player">The player that does the move.</param>
+      <param name="placement">The chosen placement for this move.</param>
+      <returns>True, if the move is allowed, otherwise false.</returns>
+    </member>
+    <member name="M:ConsoleApp.Game.DrawStartingCards">
+      <summary>
+        Prepares the game.
+      </summary>
+    </member>
+    <member name="T:ConsoleApp.GameRules">
+      <summary>
+        Game rules/settings for "The Game".
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.GameRules.LowestNumberInGame">
+      <summary>
+        The <b>lowest</b> number in the game and also the start card for the rows that go <b>up</b>.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.GameRules.HighestNumberInGame">
+      <summary>
+        The <b>highest</b> number in the game and also the start card for the rows that go <b>down</b>.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.GameRules.AllowedBackwardsTrick">
+      <summary>
+        The difference allowed by the backwards trick.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.GameRules.NumberOfCardsInDeck">
+      <summary>
+        The number of cards in the shuffled deck (<see cref="F:ConsoleApp.GameRules.HighestNumberInGame" /> -
+        <see cref="F:ConsoleApp.GameRules.LowestNumberInGame" />).
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.GameRules.MinNumberOfPlayersAllowed">
+      <summary>
+        The <b>minimum</b> number of players allowed.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.GameRules.MaxNumberOfPlayersAllowed">
+      <summary>
+        The <b>maximum</b> number of players allowed.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.GameRules.NumberOfCardsToPlayBeforeDeckIsEmpty">
+      <summary>
+        The number of cards that have to be played in each players turn <b>before</b> the card deck is empty.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.GameRules.NumberOfCardsToPlayAfterDeckIsEmpty">
+      <summary>
+        The number of cards that have to be played in each players turn <b>after</b> the card deck is empty.
+      </summary>
+    </member>
+    <member name="M:ConsoleApp.GameRules.GetNumberOfCardsToDraw(System.Int32)">
+      <summary>
+        Gets the number of cards to be drawn by each player at the start of the game.
+      </summary>
+      <param name="numberOfPlayers">The number of players.</param>
+      <exception cref="T:System.NotSupportedException">Thrown, if the number of players is not supported.</exception>
+      <returns>The number of cards to be drawn by each player</returns>
+    </member>
+    <member name="T:ConsoleApp.Player">
+      <summary>
+        A player for "The Game".
+      </summary>
+    </member>
+    <member name="M:ConsoleApp.Player.NewPlayer(System.String)">
+      <summary>
+        Initializes and returns a new instance of the <see cref="T:ConsoleApp.Player" /> class.
+      </summary>
+      <param name="name">The name of the player.</param>
+      <returns>The new player.</returns>
+    </member>
+    <member
+      name="M:ConsoleApp.Player.AddMoveRule(System.Func{System.Collections.Generic.IReadOnlyCollection{System.Int32},ConsoleApp.PlayerInformation,ConsoleApp.PlayerMove})">
+      <summary>
+        Adds an additional move rule.
+      </summary>
+      <param name="additionalMoveRule">The additional move rule.</param>
+      <returns>The player.</returns>
+    </member>
+    <member
+      name="M:ConsoleApp.Player.SetCommunicationRule(System.Func{System.Collections.Generic.IReadOnlyCollection{System.Int32},ConsoleApp.PlayerInformation,System.Collections.Generic.List{ConsoleApp.PlayerCommunication}})">
+      <summary>
+        Sets the new communication rule. The old rule is overwritten.
+      </summary>
+      <param name="newCommunicationRule">The communication rule.</param>
+      <returns>The player.</returns>
+    </member>
+    <member
+      name="M:ConsoleApp.Player.SetStartRule(System.Func{System.Collections.Generic.IReadOnlyCollection{System.Int32},System.Int32,ConsoleApp.PlayerStartDecision})">
+      <summary>
+        Sets the new start rule. The old rule is overwritten.
+      </summary>
+      <param name="newStartRule">The start rule.</param>
+      <returns>The player.</returns>
+    </member>
+    <member name="M:ConsoleApp.Player.ToString">
+      <inheritdoc />
+    </member>
+    <member name="M:ConsoleApp.Player.ToString(System.Boolean)">
+      <summary>
+        Converts the player to a string representation.
+      </summary>
+      <param name="outputWithCards">If set to true, add the cards in hand to the string representation.</param>
+      <returns>Player representation as string.</returns>
+    </member>
+    <member name="M:ConsoleApp.Player.ReceiveCard(System.Int32)">
+      <summary>
+        Receive the card and add it to the cards in hand.
+      </summary>
+      <param name="card">The card to receive.</param>
+    </member>
+    <member name="M:ConsoleApp.Player.HandOverCard(System.Int32)">
+      <summary>
+        Hand over the card.
+      </summary>
+      <param name="card">The card to hand over.</param>
+      <exception cref="T:System.ArgumentException">The card was not in the hand.</exception>
+    </member>
+    <member name="M:ConsoleApp.Player.GetNextMove(ConsoleApp.PlayerInformation)">
+      <summary>
+        Get the next move.
+      </summary>
+      <param name="info">The available information for the player.</param>
+      <returns>The next move of the player.</returns>
+    </member>
+    <member name="M:ConsoleApp.Player.GetCommunication(ConsoleApp.PlayerInformation)">
+      <summary>
+        Get the player's communication.
+      </summary>
+      <param name="info">The available information for the player.</param>
+      <returns>The communication from the player.</returns>
+    </member>
+    <member name="M:ConsoleApp.Player.GetStartDecision(System.Int32)">
+      <summary>
+        Gets the player's start decision.
+      </summary>
+      <param name="round">The round.</param>
+      <returns>The start decision from the player.</returns>
+    </member>
+    <member
+      name="M:ConsoleApp.Player.NoCommunication(System.Collections.Generic.IReadOnlyCollection{System.Int32},ConsoleApp.PlayerInformation)">
+      <summary>
+        Standard implementation for the communication of the player; the player does not communicate.
+      </summary>
+      <param name="cards">Not used.</param>
+      <param name="info">Not used.</param>
+      <returns>Communication with no content.</returns>
+    </member>
+    <member
+      name="M:ConsoleApp.Player.AlwaysWantsToStart(System.Collections.Generic.IReadOnlyCollection{System.Int32},System.Int32)">
+      <summary>
+        Standard implementation for the decision of the player to start the game; the player always wants to play.
+      </summary>
+      <param name="cards">Not used.</param>
+      <param name="startingRound">Not used.</param>
+      <returns>Player wants to start.</returns>
+    </member>
+    <member name="T:ConsoleApp.PlayerCommunication">
+      <summary>
+        The communication between <see cref="T:ConsoleApp.Player" />s.
+      </summary>
+    </member>
+    <member
+      name="M:ConsoleApp.PlayerCommunication.#ctor(ConsoleApp.RowOfCardsIdentifier,ConsoleApp.PlayerCommunicationType)">
+      <summary>
+        The communication between <see cref="T:ConsoleApp.Player" />s.
+      </summary>
+    </member>
+    <member name="T:ConsoleApp.PlayerCommunicationType">
+      <summary>
+        The possible types of allowed <see cref="T:ConsoleApp.PlayerCommunication" />.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.PlayerCommunicationType.DoNotPlayHere">
+      <summary>
+        No one should play here.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.PlayerCommunicationType.TryNotToPlayHere">
+      <summary>
+        One should try not to play here.
+      </summary>
+    </member>
+    <member name="T:ConsoleApp.PlayerFactory">
+      <summary>
+        Provides preset <see cref="T:ConsoleApp.Player" />s that have an implementation for the
+        <see cref="T:ConsoleApp.PlayerMove" /> and
+        <see cref="T:ConsoleApp.PlayerCommunication" />.
+      </summary>
+    </member>
+    <member name="M:ConsoleApp.PlayerFactory.PlaysCardWithSmallestDistance(System.String)">
+      <summary>
+        <para>Simple <see cref="T:ConsoleApp.Player" /> implementation with two rules:</para>
+        <list type="number">
+          <item>
+            <description>Play every card with a distance of less than 5.</description>
+          </item>
+          <item>
+            <description>
+              If more cards need to be played, play them in descending order of distance
+              until the minimum number of cards to play is reached.
+            </description>
+          </item>
+        </list>
+      </summary>
+      <param name="name">Name of the player.</param>
+    </member>
+    <member name="M:ConsoleApp.PlayerFactory.PlaysBackwardsAndSmallestDistance(System.String)">
+      <summary>
+        <para><see cref="T:ConsoleApp.Player" /> implementation with three rules:</para>
+        <list type="number">
+          <item>
+            <description>Play every possible backwards trick.</description>
+          </item>
+          <item>
+            <description>Play every card with a distance of less than 5.</description>
+          </item>
+          <item>
+            <description>
+              If more cards need to be played, play them in descending order of distance
+              until the minimum number of cards to play is reached.
+            </description>
+          </item>
+        </list>
+      </summary>
+      <param name="name">Name of the player.</param>
+    </member>
+    <member name="M:ConsoleApp.PlayerFactory.PlaysBackwardsAndSmallestDistanceWithCommunication(System.String)">
+      <summary>
+        <para><see cref="T:ConsoleApp.Player" /> implementation that communicates, with four rules:</para>
+        <list type="number">
+          <item>
+            <description>Play every possible backwards trick.</description>
+          </item>
+          <item>
+            <description>Play every card with a distance of less than 5 unless blocked by DoNotPlayHere.</description>
+          </item>
+          <item>
+            <description>
+              If more cards need to be played, play them in descending order of distance unless blocked by
+              TryNotToPlayHere.
+            </description>
+          </item>
+          <item>
+            <description>
+              If more cards need to be played, play them in descending order of distance.
+            </description>
+          </item>
+        </list>
+      </summary>
+      <param name="name">Name of the player.</param>
+    </member>
+    <member
+      name="M:ConsoleApp.PlayerFactory.GetPlayers(System.Collections.Generic.IReadOnlyList{ConsoleApp.AvailablePlayer})">
+      <summary>
+        Gets the actual players from the available players.
+      </summary>
+      <param name="availablePlayers">The available players.</param>
+      <returns>The actual players.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="availablePlayers" /> is <see langword="null" />
+      </exception>
+      <exception cref="T:System.NotSupportedException"></exception>
+    </member>
+    <member name="M:ConsoleApp.PlayerFactory.BackwardsTrickWithOptionalBestScoredMove(System.String)">
+      <summary>
+        <para><see cref="T:ConsoleApp.Player" /> implementation that communicates, with two rules:</para>
+        <list type="number">
+          <item>
+            <description>Play every possible backwards trick.</description>
+          </item>
+          <item>
+            <description>
+              If more cards need to be played, play the best scored move.
+            </description>
+          </item>
+        </list>
+      </summary>
+      <param name="name">Name of the player.</param>
+    </member>
+    <member name="M:ConsoleApp.PlayerFactory.PlaysBestScoredPlays(System.String)">
+      <summary>
+        <para><see cref="T:ConsoleApp.Player" /> implementation that plays the best scored play from all possible plays.</para>
+      </summary>
+      <param name="name">name of the player.</param>
+    </member>
+    <member name="T:ConsoleApp.PlayerInformation">
+      <summary>
+        The information that is handed to a <see cref="T:ConsoleApp.Player" /> to make his
+        <see cref="T:ConsoleApp.PlayerMoveDecision" />.
+      </summary>
+    </member>
+    <member
+      name="M:ConsoleApp.PlayerInformation.#ctor(System.Int32,System.Int32,System.Collections.ObjectModel.ReadOnlyDictionary{ConsoleApp.RowOfCardsIdentifier,ConsoleApp.RowOfCards}@,System.Collections.Generic.List{ConsoleApp.PlayerCommunication})">
+      <summary>
+        The information that is handed to a <see cref="T:ConsoleApp.Player" /> to make his
+        <see cref="T:ConsoleApp.PlayerMoveDecision" />.
+      </summary>
+    </member>
+    <member name="T:ConsoleApp.PlayerMove">
+      <summary>
+        A move a <see cref="T:ConsoleApp.Player" /> wants to do.
+      </summary>
+    </member>
+    <member name="M:ConsoleApp.PlayerMove.#ctor(ConsoleApp.PlayerMoveDecision,ConsoleApp.CardPlacement)">
+      <summary>
+        A move a <see cref="T:ConsoleApp.Player" /> wants to do.
+      </summary>
+    </member>
+    <member name="T:ConsoleApp.PlayerMoveDecision">
+      <summary>
+        The decisions the <see cref="T:ConsoleApp.Player" /> can make for a <see cref="T:ConsoleApp.PlayerMove" />.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.PlayerMoveDecision.Undecided">
+      <summary>
+        The <see cref="T:ConsoleApp.Player" /> has not decided yet.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.PlayerMoveDecision.HaveNoCards">
+      <summary>
+        The <see cref="T:ConsoleApp.Player" /> has no more cards to play.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.PlayerMoveDecision.WantToPlay">
+      <summary>
+        The <see cref="T:ConsoleApp.Player" /> wants to play a card.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.PlayerMoveDecision.DoNotWantToPlay">
+      <summary>
+        The <see cref="T:ConsoleApp.Player" /> does not want to play a card.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.PlayerMoveDecision.CannotPlay">
+      <summary>
+        The <see cref="T:ConsoleApp.Player" /> cannot play a card.
+      </summary>
+    </member>
+    <member name="T:ConsoleApp.PlayerStartDecision">
+      <summary>
+        The decisions a <see cref="T:ConsoleApp.Player" /> can make at the start of the
+        <see cref="T:ConsoleApp.Game" />.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.PlayerStartDecision.WantToStart">
+      <summary>
+        The <see cref="T:ConsoleApp.Player" /> wants to start.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.PlayerStartDecision.CouldStart">
+      <summary>
+        The <see cref="T:ConsoleApp.Player" /> could start, if necessary.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.PlayerStartDecision.DoNotWantToStart">
+      <summary>
+        The <see cref="T:ConsoleApp.Player" /> does not want to start, if possible.
+      </summary>
+    </member>
+    <member name="T:ConsoleApp.RowOfCards">
+      <summary>
+        A row of cards for "The Game".
+      </summary>
+    </member>
+    <member name="M:ConsoleApp.RowOfCards.#ctor(ConsoleApp.RowOfCardsType)">
+      <summary>
+        Initializes a new instance of the <see cref="T:ConsoleApp.RowOfCards" /> class.
+      </summary>
+      <param name="type">The type of the row.</param>
+    </member>
+    <member name="P:ConsoleApp.RowOfCards.Type">
+      <summary>
+        The type of the row.
+      </summary>
+    </member>
+    <member name="P:ConsoleApp.RowOfCards.NumberOfPlayedCards">
+      <summary>
+        Gets the number of cards played on this row.
+      </summary>
+      <value>
+        The number of cards.
+      </value>
+    </member>
+    <member name="P:ConsoleApp.RowOfCards.CardOnTop">
+      <summary>
+        Gets the card on top of the row.
+      </summary>
+      <value>
+        The card on top of the row.
+      </value>
+    </member>
+    <member name="M:ConsoleApp.RowOfCards.ToString">
+      <inheritdoc />
+    </member>
+    <member name="M:ConsoleApp.RowOfCards.TryAddCard(System.Int32)">
+      <summary>
+        Tries to add the card if allowed.
+      </summary>
+      <param name="card">The card.</param>
+      <returns><see langword="true" /> if the card can be added; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="T:ConsoleApp.RowOfCardsIdentifier">
+      <summary>
+        Identifier for the four rows of cards.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.RowOfCardsIdentifier.FirstRowUp">
+      <summary>
+        The first row that goes up.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.RowOfCardsIdentifier.SecondRowUp">
+      <summary>
+        The second row that goes up.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.RowOfCardsIdentifier.FirstRowDown">
+      <summary>
+        The first row that goes down.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.RowOfCardsIdentifier.SecondRowDown">
+      <summary>
+        The second row that goes down.
+      </summary>
+    </member>
+    <member name="T:ConsoleApp.RowOfCardsType">
+      <summary>
+        The two possible types of the rows of cards.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.RowOfCardsType.Up">
+      <summary>
+        The row of cards goes up.
+      </summary>
+    </member>
+    <member name="F:ConsoleApp.RowOfCardsType.Down">
+      <summary>
+        The row of cards goes down.
+      </summary>
+    </member>
+    <member name="T:ConsoleApp.ScorePlayerMoves">
+      <summary>
+        Score all possible player moves.
+      </summary>
+    </member>
+    <member
+      name="M:ConsoleApp.ScorePlayerMoves.GetScoredPlays(System.Collections.Generic.IReadOnlyCollection{System.Int32},System.Collections.Generic.IReadOnlyDictionary{ConsoleApp.RowOfCardsIdentifier,ConsoleApp.RowOfCards})">
+      <summary>
+        Get possible player moves and their scores.
+      </summary>
+      <param name="cardsInHand">The cards in hand.</param>
+      <param name="rows">The rows.</param>
+      <returns>
+        Possible player moves and their scores.
+      </returns>
+      <remarks>For performance reasons, not all possible moves are scored and returned, only promising ones.</remarks>
+    </member>
+    <member name="T:ConsoleApp.SimulationResult">
+      <summary>
+        The result from the <see cref="T:ConsoleApp.SimulationRunner" />.
+      </summary>
+    </member>
+    <member
+      name="M:ConsoleApp.SimulationResult.#ctor(System.Int32,System.Int32,System.Double,System.Double,System.Double)">
+      <summary>
+        The result from the <see cref="T:ConsoleApp.SimulationRunner" />.
+      </summary>
+    </member>
+    <member name="T:ConsoleApp.SimulationRunner">
+      <summary>
+        Runs the simulation of the "The Game".
+      </summary>
+    </member>
+    <member
+      name="M:ConsoleApp.SimulationRunner.#ctor(System.Collections.Generic.IReadOnlyList{ConsoleApp.AvailablePlayer})">
+      <summary>
+        Initializes a new instance of the <see cref="T:ConsoleApp.SimulationRunner" /> class.
+      </summary>
+      <param name="availablePlayers">The available players.</param>
+    </member>
+    <member name="M:ConsoleApp.SimulationRunner.Run(System.Int32)">
+      <summary>
+        Runs the simulation.
+      </summary>
+      <param name="numberOfRuns">The number of runs.</param>
+      <returns>The result of the simulation.</returns>
+    </member>
+  </members>
+</doc>
